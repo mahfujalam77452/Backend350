@@ -41,13 +41,13 @@ app.use(mongoSanitize());
 // gzip compression
 app.use(compression());
 
-// enable cors
-const corsOptions = {
-  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5174'],
+// enable cors for all origins
+app.use(cors({
+  origin: true, // allow all origins
   credentials: true,
-};
-
-app.use(cors(corsOptions));
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+}));
 
 // jwt authentication
 app.use(passport.initialize());
