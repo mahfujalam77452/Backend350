@@ -11,15 +11,15 @@ router
     .post(auth(),validate(sslcommerzValidation.paymentInitiateSchema), sslcommerzController.initiatePayment);
 router
     .route('/success/:tran_id')
-    .post(validate(sslcommerzValidation.paymentSuccessSchema), sslcommerzController.paymentSuccess);
+    .all(validate(sslcommerzValidation.paymentSuccessSchema), sslcommerzController.paymentSuccess);
 
 router
     .route('/failed/:tran_id')
-    .post(sslcommerzController.paymentFail);
+    .all(sslcommerzController.paymentFail);
 
 router
     .route('/cancel/:tran_id')
-    .post(sslcommerzController.paymentCancel);
+    .all(sslcommerzController.paymentCancel);
 router
     .route('/transaction/:userId')
     .get(auth('manageClubs'), validate(sslcommerzValidation.getTransactionSchema), sslcommerzController.getTranByUserId);

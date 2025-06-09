@@ -16,26 +16,34 @@ const initiatePayment = catchAsync(async (req, res) => {
   }
   user.userPhone = req.body.userPhone;
   const GatewayPageURL = await sslcommerzService.initPayment(user, club);
-  res.send({url: GatewayPageURL});
+  res.send({ url: GatewayPageURL });
 });
 
 const paymentSuccess = catchAsync(async (req, res) => {
-  const transaction = await sslcommerzService.findTransaction(req.body.tran_id);
-  if (!transaction) {
-    return res.redirect(`${config.clientURL}/payment-failed/${req.body.tran_id}`);
-  }
-  const response = await sslcommerzService.validatePayment(req.body.val_id);
-  if(!response || response.status !== 'VALID') {
-    // Remove transaction if payment is not valid
-    await transaction.deleteOne();
-    return res.redirect(`${config.clientURL}/payment-failed/${req.body.tran_id}`);
-  }
-  transaction.paymentStatus = 'PAID';
-  await transaction.save();
-  await addUserToPendingList(transaction.clubId, transaction.userId);
-  console.log('Payment successful: ', transaction);
+  const tranId = req.body.tran_id || req.params.tran_id;
+  const transaction = await sslcommerzService.findTransaction(tranId);
 
-  res.redirect(`${config.clientURL}/payment-success/${req.body.tran_id}`);
+  if (!transaction) {
+    return res.redirect(`${config.clientURL}/payment/failed/${tranId}`);
+  }
+
+  // If this is a GET request (callback from SSLCommerz), we need to validate the payment
+  if (req.method === 'GET') {
+    const val_id = req.query.val_id || req.body.val_id;
+    if (val_id) {
+      const response = await sslcommerzService.validatePayment(val_id);
+      if (!response || response.status !== 'VALID') {
+        await transaction.deleteOne();
+        return res.redirect(`${config.clientURL}/payment/failed/${tranId}`);
+      }
+      transaction.paymentStatus = 'PAID';
+      await transaction.save();
+      await addUserToPendingList(transaction.clubId, transaction.userId);
+      console.log('Payment successful: ', transaction);
+    }
+  }
+
+  res.redirect(`${config.clientURL}/payment/success/${tranId}`);
 
   const club = await getClubById(transaction.clubId);
 
@@ -56,20 +64,27 @@ The AUSTCMS Team`;
 });
 
 const paymentFail = catchAsync(async (req, res) => {
-  console.log('Payment failed: ', req.body);
-  const transaction = await sslcommerzService.findTransaction(req.body.tran_id);
+  const tranId = req.body.tran_id || req.params.tran_id;
+  console.log('Payment failed: ', tranId, req.body);
+  
+  const transaction = await sslcommerzService.findTransaction(tranId);
   if (transaction) {
     await transaction.deleteOne();
   }
-  res.redirect(`${config.clientURL}/payment-failed/${req.body.tran_id}`);
+  
+  res.redirect(`${config.clientURL}/payment/failed/${tranId}`);
 });
 
 const paymentCancel = catchAsync(async (req, res) => {
-  const transaction = await sslcommerzService.findTransaction(req.body.tran_id);
+  const tranId = req.body.tran_id || req.params.tran_id;
+  console.log('Payment cancelled: ', tranId, req.body);
+  
+  const transaction = await sslcommerzService.findTransaction(tranId);
   if (transaction) {
     await transaction.deleteOne();
   }
-  res.redirect(`${config.clientURL}/payment-cancel/${req.body.tran_id}`);
+  
+  res.redirect(`${config.clientURL}/payment/cancel/${tranId}`);
 });
 
 const getTranByUserId = catchAsync(async (req, res) => {
