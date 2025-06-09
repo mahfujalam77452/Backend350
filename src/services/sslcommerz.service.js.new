@@ -26,7 +26,7 @@ const createOrder = async (user, club) => {
     
     // Log the payment data for debugging
     console.log('Payment data saved with ID:', payment._id);
-    console.log('Success URL:', `${config.serverURL}/api/api/v1/sslcommerz/success/${tran_id}`);
+    console.log('Success URL:', `${config.serverURL}/api/v1/sslcommerz/success/${tran_id}`);
 
     // Payment data for SSLCommerz
     const paymentData = {
@@ -34,9 +34,9 @@ const createOrder = async (user, club) => {
       currency: 'BDT',
       tran_id: tran_id,
       // Use server URL for callbacks to handle payment processing
-      success_url: `${config.serverURL}/api/api/v1/sslcommerz/success/${tran_id}`,
-      fail_url: `${config.serverURL}/api/api/v1/sslcommerz/failed/${tran_id}`,
-      cancel_url: `${config.serverURL}/api/api/v1/sslcommerz/cancel/${tran_id}`,
+      success_url: `${config.serverURL}/api/v1/sslcommerz/success/${tran_id}`,
+      fail_url: `${config.serverURL}/api/v1/sslcommerz/failed/${tran_id}`,
+      cancel_url: `${config.serverURL}/api/v1/sslcommerz/cancel/${tran_id}`,
       // Add client URL for frontend redirection after processing
       client_url: config.clientURL,
       shipping_method: 'NO',
