@@ -26,16 +26,16 @@ const createOrder = async (user, club) => {
     
     // Log the payment data for debugging
     console.log('Payment data saved with ID:', payment._id);
-    console.log('Success URL:', `${config.clientURL}/payment-success/${tran_id}`);
+    console.log('Success URL:', `${config.serverURL}/v1/sslcommerz/success/${tran_id}`);
 
     // Payment data for SSLCommerz
     const paymentData = {
       total_amount: process.env.PAYMENT_AMOUNT,
       currency: 'BDT',
       tran_id: tran_id,
-      success_url: `${config.clientURL}/payment-success/${tran_id}`,
-      fail_url: `${config.clientURL}/payment-failed/${tran_id}`,
-      cancel_url: `${config.clientURL}/payment-cancel/${tran_id}`, 
+      success_url: `${config.serverURL}/v1/sslcommerz/success/${tran_id}`,
+      fail_url: `${config.serverURL}/v1/sslcommerz/failed/${tran_id}`,
+      cancel_url: `${config.serverURL}/v1/sslcommerz/cancel/${tran_id}`,
       shipping_method: 'NO',
       product_name: club.name,
       product_category: 'Club',
