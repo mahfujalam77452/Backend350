@@ -38,6 +38,7 @@ const createOrder = async (user, club) => {
       fail_url: `${baseUrl}/v1/sslcommerz/failed/${tran_id}`,
       cancel_url: `${baseUrl}/v1/sslcommerz/cancel/${tran_id}`,
       // Add client URL for frontend redirection after processing
+      // Make sure this matches your frontend deployment URL
       client_url: config.clientURL,
       shipping_method: 'NO',
       product_name: club.name,
