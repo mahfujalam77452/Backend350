@@ -143,25 +143,25 @@ If you did not request any password resets, then ignore this email.`;
  * @returns {Promise}
  */
 const sendVerificationEmail = async (to, token) => {
-  const subject = 'Email Verification for AUSTCMS';
+  const subject = 'Email Verification for SUSTCMS';
   // replace this url with the link to the email verification page of your front-end app
   const verificationEmailUrl = `${config.clientURL}/verify-email?token=${token}`;
-  const text = `Dear AUST Student,
+  const text = `Dear SUST Student,
 
-Welcome to AUSTCMS - the Club Management System for Ahsanullah University of Science and Technology!
+Welcome to SUSTCMS - the Club Management System for Ahsanullah University of Science and Technology!
 
-We're excited to have you join our community. To complete your registration and start exploring the vibrant club life at AUST, please verify your email address by clicking on the link below:
+We're excited to have you join our community. To complete your registration and start exploring the vibrant club life at SUST, please verify your email address by clicking on the link below:
 
 ${verificationEmailUrl}
 
 This link will be active for the next 24 hours. If you don't verify your email within this time, you may need to request a new verification link.
 
-If you didn't create an account on AUSTCMS, please disregard this email. Your information remains secure, and no action is required on your part.
+If you didn't create an account on SUSTCMS, please disregard this email. Your information remains secure, and no action is required on your part.
 
 Should you have any questions or need assistance, please don't hesitate to contact our support team.
 
 Best regards,
-The AUSTCMS Team
+The SUSTCMS Team
 Ahsanullah University of Science and Technology`;
 
   await sendEmail(to, subject, text);

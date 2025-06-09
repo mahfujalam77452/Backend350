@@ -51,7 +51,7 @@ Please note that your membership is pending approval for admin review. You will 
 Thank you for your payment.
 
 Best regards,
-The AUSTCMS Team`;
+The SUSTCMS Team`;
   await sendEmail(transaction.userEmail, subject, text);
 });
 
