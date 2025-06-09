@@ -56,20 +56,55 @@ The AUSTCMS Team`;
 });
 
 const paymentFail = catchAsync(async (req, res) => {
-  console.log('Payment failed: ', req.body);
-  const transaction = await sslcommerzService.findTransaction(req.body.tran_id);
-  if (transaction) {
-    await transaction.deleteOne();
+  try {
+    const tranId = req.body.tran_id || req.query.tran_id;
+    console.log('Payment failed: ', { tranId, query: req.query, body: req.body });
+    
+    if (tranId) {
+      const transaction = await sslcommerzService.findTransaction(tranId);
+      if (transaction) {
+        console.log('Deleting failed transaction:', tranId);
+        await transaction.deleteOne();
+      }
+    }
+    
+    // Redirect with error details from query or body
+    const errorCode = req.query.error || req.body.error || 'payment_failed';
+    return res.redirect(
+      `${config.clientURL}/payment-failed?tran_id=${tranId || 'unknown'}&error=${errorCode}`
+    );
+    
+  } catch (error) {
+    console.error('Error in paymentFail handler:', error);
+    return res.redirect(
+      `${config.clientURL}/payment-failed?error=server_error`
+    );
   }
-  res.redirect(`${config.clientURL}/payment-failed/${req.body.tran_id}`);
 });
 
 const paymentCancel = catchAsync(async (req, res) => {
-  const transaction = await sslcommerzService.findTransaction(req.body.tran_id);
-  if (transaction) {
-    await transaction.deleteOne();
+  try {
+    const tranId = req.body.tran_id || req.query.tran_id;
+    console.log('Payment cancelled: ', { tranId, query: req.query, body: req.body });
+    
+    if (tranId) {
+      const transaction = await sslcommerzService.findTransaction(tranId);
+      if (transaction) {
+        console.log('Deleting cancelled transaction:', tranId);
+        await transaction.deleteOne();
+      }
+    }
+    
+    return res.redirect(
+      `${config.clientURL}/payment-cancelled?tran_id=${tranId || 'unknown'}`
+    );
+    
+  } catch (error) {
+    console.error('Error in paymentCancel handler:', error);
+    return res.redirect(
+      `${config.clientURL}/payment-cancelled?error=server_error`
+    );
   }
-  res.redirect(`${config.clientURL}/payment-cancel/${req.body.tran_id}`);
 });
 
 const getTranByUserId = catchAsync(async (req, res) => {
